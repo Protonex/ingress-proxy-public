@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9"><![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js"><!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+</head>
+<body>
+    <section id="main">
+        <span id="signinButton">
+            <span
+                class="g-signin"
+                data-callback="signinCallback"
+                data-clientid="1042272946053.apps.googleusercontent.com"
+                data-redirecturi="postmessage"
+                data-accesstype="offline"
+                data-cookiepolicy="single_host_origin"
+                data-requestvisibleactions="http://schemas.google.com/AddActivity"
+                data-scope="https://www.googleapis.com/auth/userinfo.email">
+            </span>
+        </span>
+    </section>
+
+<script type="text/javascript">
+(function () {
+    var signinButton = document.getElementById('signinButton');
+    var main = document.getElementById('main');
+
+    function xhr(method, url, data, callback) {
+        if (typeof callback === 'undefined') {
+            callback = data;
+            data = undefined;
+        }
+        var _xhr = new XMLHttpRequest();
+        _xhr.onload = function () {
+            if (this.readyState === 4) {
+                callback(this);
+            }
+        };
+        _xhr.open(method, url, true);
+        _xhr.send(data || null);
+    }
+
+    window.signinCallback = function (authResult) {
+        if (authResult['code']) {
+            signinButton.style.display = 'none';
+            xhr('POST', '/setAuth', authResult.code, function (result) {
+                if (result.responseText === 'true') {
+                    window.location.reload();
+                } else {
+                    main.textContent = 'Registered. Now wait, until an Administrator unlocks your account.';
+                }
+            });
+        } else if (authResult['error']) {
+            console.log(authResult);
+        }
+    }
+}());
+
+(function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/client:plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
+</script>
+</body>
+</html>
